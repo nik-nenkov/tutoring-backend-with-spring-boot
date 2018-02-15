@@ -9,24 +9,30 @@ import java.util.List;
 @CrossOrigin
 @RequestMapping("/")
 public class MainController {
-    //                                                                  CREATE/UPDATE
-    //                                                                  save by received json (id is optional)
     @RequestMapping(
             value = "/save_book",
             method = RequestMethod.POST,
             consumes = "application/json",
-            produces = "application/json"
-    )
-    public Book saveBook(@RequestBody String receivedBook)
-    {
+            produces = "application/json")                                                                      //CREATE/UPDATE
+    public Book         saveBook(@RequestBody String receivedBook) {
         JSONObject bookObj = new JSONObject(receivedBook);
         Book b = new Book(bookObj);
         return persistBook(b);
+    }        //save by received json [id is optional]
+    @RequestMapping(
+            value = "/authors",
+            produces = "application/json")                                                                  //READ points:
+    public List<Author> suggestAuth(@RequestParam(value = "s", defaultValue = "") String sampleName){
+        List<Author> sample = null;
+        if(sampleName.length()>=3){
+            sample = authRepository.findAllByNameContaining(sampleName);
+        }
+        return sample;
     }
-    //                                                                  READ point
-    @RequestMapping("/books")
-    public List<Book> listAllBooks(@RequestParam(value = "o", defaultValue = "") String order)
-    {
+    @RequestMapping(
+            value = "/books",
+            produces = "application/json")
+    public List<Book>   listAllBooks(@RequestParam(value = "o", defaultValue = "") String order) {
         switch (order) {
             case "id":
                 return bookRepository.findAllByOrderByIdAsc();
@@ -38,9 +44,10 @@ public class MainController {
                 return bookRepository.findAll();
         }
     }
-    @RequestMapping(value="/book", produces = "application/json")
-    public String showOneBook(@RequestParam("i") String id)
-    {
+    @RequestMapping(
+            value="/book",
+            produces = "application/json")
+    public String       showOneBook(@RequestParam("i") String id) {
         ObjectMapper mapper = new ObjectMapper();
         Book b = bookRepository.findOne(Long.parseLong(id));
         try {
@@ -50,30 +57,10 @@ public class MainController {
         }
 
     }
-    //<editor-fold desc="UPDATE point (now obsolete)">
-    /*
-    @RequestMapping("/update")
-    public String updateBook(
-            @RequestParam("i") String id,
-            @RequestParam("t") String title,
-            @RequestParam("n") String isbn
-    ){
-        try {
-            Book b = bookRepository.findOne(Long.parseLong(id));
-            b.setTitle(title);
-            b.setIsbn(isbn);
-            bookRepository.save(b);
-            return "Book with id="+id+" was edited!";
-        }catch(Exception e){
-            return "No books were edited!";
-        }
-    }
-    */
-    //</editor-fold>
-    //                                                                  DELETE point
-    @RequestMapping("/delete")
-    public String deleteBook(@RequestParam("i") String id)
-    {
+    @RequestMapping(
+            value="/delete"
+    )                                                               //DELETE point
+    public String       deleteBook(@RequestParam("i") String id) {
         try {
             bookRepository.delete(Long.parseLong(id));
             return "Book with id="+id+" was removed from DB";
@@ -81,24 +68,24 @@ public class MainController {
             return "No books were deleted";
         }
     }
-    //                                                                  JpaRepositories and a Transactional persist
-    @Autowired
-    BookRepository bookRepository;
-    @Autowired
-    AuthorRepository authRepository;
-    @Transactional
-    public Book persistBook(Book b){
-        List<Author> mutatedList = b.getAuthors();
+    @Autowired BookRepository bookRepository;                           //JpaRepositories and a Transactional persist
+    @Autowired AuthorRepository authRepository;
+    @Transactional public Book persistBook(Book b){
         try {
-            for (int i = 0; i < mutatedList.size(); i++) {
-                if (authRepository.exists(mutatedList.get(i).getId())) {
-                    Author a = authRepository.findOne(mutatedList.get(i).getId());
-                    mutatedList.set(i, a);
+            List<Author> mutatedList = b.getAuthors();
+            try {
+                for (int i = 0; i < mutatedList.size(); i++) {
+                    if (authRepository.exists(mutatedList.get(i).getId())) {
+                        Author a = authRepository.findOne(mutatedList.get(i).getId());
+                        mutatedList.set(i, a);
+                    }
                 }
+            }finally{
+                b.setAuthors(mutatedList);
+                authRepository.save(mutatedList);
             }
-        }finally{
-            b.setAuthors(mutatedList);
-            authRepository.save(mutatedList);
+        }catch (Exception e){
+            e.getMessage();
         }
         return bookRepository.save(b);
     }
