@@ -26,7 +26,7 @@ public class MainController {
     }
     //                                                                  READ point
     @RequestMapping("/books")
-    public List<Book> listAllBooks(@RequestParam(value = "o", required = false) String order)
+    public List<Book> listAllBooks(@RequestParam(value = "o", defaultValue = "") String order)
     {
         switch (order) {
             case "id":

@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 @Data
 @Entity
-class Book{
+public class Book{
     @Id
     @GeneratedValue
     private long id;
@@ -21,7 +21,8 @@ class Book{
             inverseJoinColumns = @JoinColumn(name="author_id",referencedColumnName = "id")
             )
     private List<Author> authors;
-    Book (JSONObject book){
+    public Book(){}
+    public Book(JSONObject book){
         this.setTitle(book.getString("title"));
         this.setIsbn(book.getString("isbn"));
         if(book.has("authors")){
