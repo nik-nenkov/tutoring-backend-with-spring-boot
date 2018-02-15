@@ -1,4 +1,5 @@
 package blib;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.json.JSONObject;
@@ -39,9 +40,16 @@ public class MainController {
         }
     }
     @RequestMapping(value="/book", produces = "application/json")
-    public Book showOneBook(@RequestParam("i") String id)
+    public String showOneBook(@RequestParam("i") String id)
     {
-        return bookRepository.findOne(Long.parseLong(id));
+        ObjectMapper mapper = new ObjectMapper();
+        Book b = bookRepository.findOne(Long.parseLong(id));
+        try {
+            return mapper.writeValueAsString(b);
+        }catch (Exception e){
+            return "something went wrong";
+        }
+
     }
     //                                                                  UPDATE point
     @RequestMapping("/update")
