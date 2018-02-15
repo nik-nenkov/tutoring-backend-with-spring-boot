@@ -9,7 +9,7 @@ import java.util.List;
 @Entity
 public class Book{
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String title;
     private String isbn;
@@ -23,6 +23,9 @@ public class Book{
     private List<Author> authors;
     public Book(){}
     public Book(JSONObject book){
+        if(book.has("id")){
+            this.setId(book.getLong("id"));
+        }
         this.setTitle(book.getString("title"));
         this.setIsbn(book.getString("isbn"));
         if(book.has("authors")){

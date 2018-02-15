@@ -3,22 +3,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.json.JSONObject;
-
 import javax.transaction.Transactional;
 import java.util.List;
-
 @RestController
 @CrossOrigin
 @RequestMapping("/")
 public class MainController {
-    //                                                                  CREATE point
+    //                                                                  CREATE/UPDATE
+    //                                                                  save by received json (id is optional)
     @RequestMapping(
-            value = "/create",
+            value = "/save_book",
             method = RequestMethod.POST,
             consumes = "application/json",
             produces = "application/json"
     )
-    public Book createBook(@RequestBody String receivedBook)
+    public Book saveBook(@RequestBody String receivedBook)
     {
         JSONObject bookObj = new JSONObject(receivedBook);
         Book b = new Book(bookObj);
@@ -51,7 +50,8 @@ public class MainController {
         }
 
     }
-    //                                                                  UPDATE point
+    //<editor-fold desc="UPDATE point (now obsolete)">
+    /*
     @RequestMapping("/update")
     public String updateBook(
             @RequestParam("i") String id,
@@ -68,11 +68,12 @@ public class MainController {
             return "No books were edited!";
         }
     }
+    */
+    //</editor-fold>
     //                                                                  DELETE point
     @RequestMapping("/delete")
-    public String deleteBook(
-            @RequestParam("i") String id
-    ){
+    public String deleteBook(@RequestParam("i") String id)
+    {
         try {
             bookRepository.delete(Long.parseLong(id));
             return "Book with id="+id+" was removed from DB";
@@ -80,7 +81,7 @@ public class MainController {
             return "No books were deleted";
         }
     }
-    //                                                                  JpaRepository<Book,Long>
+    //                                                                  JpaRepositories and a Transactional persist
     @Autowired
     BookRepository bookRepository;
     @Autowired
