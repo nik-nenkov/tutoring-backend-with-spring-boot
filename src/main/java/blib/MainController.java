@@ -21,10 +21,10 @@ public class MainController {
     }        //save by received json [id is optional]
     @RequestMapping(
             value = "/authors",
-            produces = "application/json")                                                                  //READ points:
+            produces = "application/json")                                                                      //READ points:
     public List<Author> suggestAuth(@RequestParam(value = "s", defaultValue = "") String sampleName){
         List<Author> sample = null;
-        if(sampleName.length()>=3){
+        if(sampleName.length()>=1){
             sample = authRepository.findAllByNameContaining(sampleName);
         }
         return sample;
@@ -59,7 +59,7 @@ public class MainController {
     }
     @RequestMapping(
             value="/delete"
-    )                                                               //DELETE point
+    )                                                                       //DELETE point
     public String       deleteBook(@RequestParam("i") String id) {
         try {
             bookRepository.delete(Long.parseLong(id));
@@ -68,7 +68,7 @@ public class MainController {
             return "No books were deleted";
         }
     }
-    @Autowired BookRepository bookRepository;                           //JpaRepositories and a Transactional persist
+    @Autowired BookRepository bookRepository;                                    //JpaRepositories and a "Transactional"
     @Autowired AuthorRepository authRepository;
     @Transactional public Book persistBook(Book b){
         try {
