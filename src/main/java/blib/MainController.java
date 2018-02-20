@@ -3,6 +3,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.json.JSONObject;
+
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.util.List;
 @RestController
@@ -59,14 +61,9 @@ public class MainController {
     }
     @RequestMapping(
             value="/delete"
-    )                                                                       //DELETE point
+    )
     public String       deleteBook(@RequestParam("i") String id) {
-        try {
-            bookRepository.delete(Long.parseLong(id));
-            return "Book with id="+id+" was removed from DB";
-        }catch(Exception e){
-            return "No books were deleted";
-        }
+        return removeBookWithOrphans(Long.parseLong(id));
     }
     @Autowired BookRepository bookRepository;                                    //JpaRepositories and a "Transactional"
     @Autowired AuthorRepository authRepository;
@@ -88,5 +85,14 @@ public class MainController {
             e.getMessage();
         }
         return bookRepository.save(b);
+    }
+    @Transactional public String removeBookWithOrphans(Long id){
+        try {
+            bookRepository.delete(id);
+            authRepository.clearThoseOrphans();
+            return "Book with id="+id+" was removed from DB";
+        }catch(Exception e){
+            return "No books were deleted";
+        }
     }
 }
