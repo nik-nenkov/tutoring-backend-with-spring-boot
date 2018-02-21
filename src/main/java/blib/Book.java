@@ -14,6 +14,8 @@ public class Book{
     private String title;
     private String isbn;
     private String image;
+    //Проблема с премахването на ненужни автори които вече не са свързани с никоя книга
+    //е решен чрез създаване на trigger в базата данни който се изпълнява след delete на книга
     @ManyToMany
     @JoinTable(
             name = "author_book",
