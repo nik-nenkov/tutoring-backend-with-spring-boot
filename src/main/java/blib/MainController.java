@@ -9,6 +9,12 @@ import java.util.List;
 @CrossOrigin
 @RequestMapping("/")
 public class MainController {
+    @Autowired
+    public MainController(BookRepository bookRepository, AuthorRepository authRepository) {
+        this.bookRepository = bookRepository;
+        this.authRepository = authRepository;
+    }
+
     @RequestMapping(
             value = "/save_book",
             method = RequestMethod.POST,
@@ -68,8 +74,8 @@ public class MainController {
             return "No books were deleted";
         }
     }
-    @Autowired BookRepository bookRepository;                                    //JpaRepositories and a "Transactional"
-    @Autowired AuthorRepository authRepository;
+    private final BookRepository bookRepository;                                    //JpaRepositories and a "Transactional"
+    private final AuthorRepository authRepository;
     @Transactional public Book persistBook(Book b){
         try {
             List<Author> mutatedList = b.getAuthors();
