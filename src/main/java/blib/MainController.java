@@ -1,14 +1,19 @@
 package blib;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.json.JSONObject;
+
 import javax.transaction.Transactional;
 import java.util.List;
+
 @RestController
 @CrossOrigin
 @RequestMapping("/")
 public class MainController {
+
+
     @Autowired
     public MainController(BookRepository bookRepository, AuthorRepository authRepository) {
         this.bookRepository = bookRepository;
@@ -19,26 +24,30 @@ public class MainController {
             value = "/save_book",
             method = RequestMethod.POST,
             consumes = "application/json",
-            produces = "application/json")                                                                      //CREATE/UPDATE
-    public Book         saveBook(@RequestBody String receivedBook) {
+            produces = "application/json")
+    //CREATE/UPDATE
+    public Book saveBook(@RequestBody String receivedBook) {
         JSONObject bookObj = new JSONObject(receivedBook);
         Book b = new Book(bookObj);
         return persistBook(b);
     }        //save by received json [id is optional]
+
     @RequestMapping(
             value = "/authors",
-            produces = "application/json")                                                                      //READ points:
-    public List<Author> suggestAuth(@RequestParam(value = "s", defaultValue = "") String sampleName){
+            produces = "application/json")
+    //READ points:
+    public List<Author> suggestAuth(@RequestParam(value = "s", defaultValue = "") String sampleName) {
         List<Author> sample = null;
-        if(sampleName.length()>=1){
+        if (sampleName.length() >= 1) {
             sample = authRepository.findAllByNameContaining(sampleName);
         }
         return sample;
     }
+
     @RequestMapping(
             value = "/books",
             produces = "application/json")
-    public List<Book>   listAllBooks(@RequestParam(value = "o", defaultValue = "") String order) {
+    public List<Book> listAllBooks(@RequestParam(value = "o", defaultValue = "") String order) {
         switch (order) {
             case "id":
                 return bookRepository.findAllByOrderByIdAsc();
@@ -50,48 +59,49 @@ public class MainController {
                 return bookRepository.findAll();
         }
     }
+
     @RequestMapping(
-            value="/book",
+            value = "/book",
             produces = "application/json")
-    public String       showOneBook(@RequestParam("i") String id) {
+    public String showOneBook(@RequestParam("i") String id) {
         ObjectMapper mapper = new ObjectMapper();
         Book b = bookRepository.findOne(Long.parseLong(id));
         try {
             return mapper.writeValueAsString(b);
-        }catch (Exception e){
+        } catch (Exception e) {
             return "something went wrong";
         }
 
     }
+
     @RequestMapping(
-            value="/delete"
+            value = "/delete"
     )
-    public String       deleteBook(@RequestParam("i") String id) {
+    public String deleteBook(@RequestParam("i") String id) {
         try {
             bookRepository.delete(Long.parseLong(id));
-            return "Book with id="+id+" was removed from DB";
-        }catch(Exception e){
+            return "Book with id=" + id + " was removed from DB";
+        } catch (Exception e) {
             return "No books were deleted";
         }
     }
+
     private final BookRepository bookRepository;                                    //JpaRepositories and a "Transactional"
     private final AuthorRepository authRepository;
-    @Transactional public Book persistBook(Book b){
+
+    @Transactional
+    public Book persistBook(Book b) {
+        List<Author> mutatedList = b.getAuthors();
         try {
-            List<Author> mutatedList = b.getAuthors();
-            try {
-                for (int i = 0; i < mutatedList.size(); i++) {
-                    if (authRepository.exists(mutatedList.get(i).getId())) {
-                        Author a = authRepository.findOne(mutatedList.get(i).getId());
-                        mutatedList.set(i, a);
-                    }
+            for (int i = 0; i < mutatedList.size(); i++) {
+                if (authRepository.exists(mutatedList.get(i).getId())) {
+                    Author a = authRepository.findOne(mutatedList.get(i).getId());
+                    mutatedList.set(i, a);
                 }
-            }finally{
-                b.setAuthors(mutatedList);
-                authRepository.save(mutatedList);
             }
-        }catch (Exception e){
-            e.getMessage();
+        } finally {
+            b.setAuthors(mutatedList);
+            authRepository.save(mutatedList);
         }
         return bookRepository.save(b);
     }

@@ -1,10 +1,11 @@
 package blib;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
-import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.util.List;
+
 @Data
 @Entity
 class Author {
