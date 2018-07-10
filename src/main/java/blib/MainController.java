@@ -1,9 +1,9 @@
 package blib;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.json.JSONObject;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -13,6 +13,9 @@ import java.util.List;
 @RequestMapping("/")
 public class MainController {
 
+
+    private final BookRepository bookRepository;                                    //JpaRepositories and a "Transactional"
+    private final AuthorRepository authRepository;
 
     @Autowired
     public MainController(BookRepository bookRepository, AuthorRepository authRepository) {
@@ -85,9 +88,6 @@ public class MainController {
             return "No books were deleted";
         }
     }
-
-    private final BookRepository bookRepository;                                    //JpaRepositories and a "Transactional"
-    private final AuthorRepository authRepository;
 
     @Transactional
     public Book persistBook(Book b) {
