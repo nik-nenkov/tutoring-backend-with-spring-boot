@@ -1,6 +1,7 @@
-package blib;
+package blib.book;
 
 
+import blib.author.Author;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
