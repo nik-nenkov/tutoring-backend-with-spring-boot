@@ -1,6 +1,5 @@
-package blib.author;
+package blib;
 
-import blib.book.Book;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.Entity;
@@ -11,7 +10,7 @@ import java.util.List;
 
 
 @Entity
-public class Author {
+class Author {
     public long getId() {
         return id;
     }
