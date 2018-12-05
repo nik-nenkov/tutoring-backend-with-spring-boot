@@ -1,4 +1,4 @@
-package blib;
+package blib.model;
 
 
 import org.json.JSONArray;

@@ -1,5 +1,9 @@
-package blib;
+package blib.controller;
 
+import blib.dao.AuthorRepository;
+import blib.dao.BookRepository;
+import blib.model.Author;
+import blib.model.Book;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;

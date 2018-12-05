@@ -1,4 +1,4 @@
-package blib;
+package blib.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -10,7 +10,7 @@ import java.util.List;
 
 
 @Entity
-class Author {
+public class Author {
     public long getId() {
         return id;
     }

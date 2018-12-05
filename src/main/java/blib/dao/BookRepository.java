@@ -1,5 +1,6 @@
-package blib;
+package blib.dao;
 
+import blib.model.Book;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
