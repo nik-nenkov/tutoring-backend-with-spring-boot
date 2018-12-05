@@ -10,5 +10,4 @@ import java.util.List;
 public interface ArticleRepository extends JpaRepository<Article,Long> {
     Article findFirstByAuthorContaining(String author);
     List<Article> findAllByDateGreaterThanOrderByDateDesc(Long earliestDate);
-    List<Article> findAllByIdFeedAndDateGreaterThanOrderByDateDesc(Integer idFeed, Long earliestDate);
 }

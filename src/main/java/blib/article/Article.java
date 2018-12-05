@@ -1,28 +1,16 @@
 package blib.article;
 
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name="freshrss_root_entry")
 public class Article {
-
     @Id
     private Long id;
-
-    @Column(name = "id_feed")
-    private Integer idFeed;
-
-    public Integer getIdFeed() {
-        return idFeed;
-    }
-
-    public void setIdFeed(Integer idFeed) {
-        this.idFeed = idFeed;
-    }
 
     private String title;
     private String author;
