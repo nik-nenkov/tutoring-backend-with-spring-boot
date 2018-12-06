@@ -39,17 +39,6 @@ public class MainController {
         return persistBook(b);
     }        //save by received json [id is optional]
 
-    @RequestMapping(
-            value = "/authors",
-            produces = "application/json")
-    //READ points:
-    public List<Author> suggestAuth(@RequestParam(value = "s", defaultValue = "") String sampleName) {
-        List<Author> sample = null;
-        if (sampleName.length() >= 1) {
-            sample = authRepository.findAllByNameContaining(sampleName);
-        }
-        return sample;
-    }
 
     @RequestMapping(
             value = "/books",
@@ -81,8 +70,9 @@ public class MainController {
 
     }
 
-    @RequestMapping(
+    @DeleteMapping(
             value = "/delete"
+
     )
     public String deleteBook(@RequestParam("i") String id) {
         try {
