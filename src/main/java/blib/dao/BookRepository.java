@@ -13,7 +13,10 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
   List<Book> findAllByOrderByIsbnAsc();
 
-  Book findOneById(long parseLong);
+  Book findOneById(long id);
 
-  void deleteOneById(long parseLong);
+  void deleteOneById(long id);
+
+  boolean existsByTitle(String title);
+  boolean existsByIsbn(String isbn);
 }

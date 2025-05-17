@@ -10,20 +10,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class AuthorRestController {
+public class AuthorsController {
   private final AuthorRepository authRepository;
 
   @Autowired
-  public AuthorRestController(AuthorRepository authRepository) {
+  public AuthorsController(AuthorRepository authRepository) {
     this.authRepository = authRepository;
   }
 
   @CrossOrigin(origins = "*")
   @GetMapping(value = "/authors", produces = "application/json")
-  // READ points:
   public List<Author> suggestAuth(@RequestParam(value = "s", defaultValue = "") String sampleName) {
     List<Author> sample = null;
-    if (sampleName.length() >= 1) {
+    if (!sampleName.isEmpty()) {
       sample = authRepository.findAllByNameContaining(sampleName);
     }
     return sample;
